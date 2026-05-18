@@ -6,28 +6,22 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// =================================================================
-// CONFIGURADO COM POOL: Evita quedas e resolve o erro {"fatal": true}
-// =================================================================
-const db = mysql.createPool({
-    host: 'autorack.proxy.rlwy.net',
-    user: 'root',
-    password: 'yxicJCODoLJakBvcfwgPsKBuDxnMxPse', // <-- Cole a sua senha do Railway aqui
-    database: 'railway',
-    port: 58285,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+// Conexão com o Banco de Dados Local (Configuração Padrão XAMPP)
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',      
+    password: '',      
+    database: 'controle_fluxo'
 });
 
-// Testar a conexão do Pool e criar a tabela se não existir
-db.getConnection((err, connection) => {
+db.connect(err => {
     if (err) {
-        console.error('Erro ao conectar ao MySQL na Nuvem:', err);
+        console.error('Erro ao conectar ao MySQL. Certifique-se de que ele está ativo no XAMPP:', err);
         return;
     }
-    console.log('Conectado com sucesso ao MySQL na Nuvem via Pool!');
+    console.log('Conectado com sucesso ao MySQL!');
     
+    // Criação automática da tabela caso ela não exista no banco
     const sqlTabela = `
         CREATE TABLE IF NOT EXISTS notas_fiscais (
             id VARCHAR(50) PRIMARY KEY,
@@ -37,10 +31,7 @@ db.getConnection((err, connection) => {
             impresso TINYINT(1) DEFAULT 0
         );
     `;
-    connection.query(sqlTabela, (queryErr) => {
-        if (queryErr) console.error('Erro ao criar tabela:', queryErr);
-        connection.release(); // Libera a conexão de volta para a piscina
-    });
+    db.query(sqlTabela);
 });
 
 // Buscar notas de um dia específico
@@ -77,9 +68,11 @@ app.put('/api/nfs/:id/imprimir', (req, res) => {
     });
 });
 
-// Excluir nota via comando de texto da IA
+// ROTA CORRIGIDA: Excluir nota via comando de texto da IA
 app.delete('/api/nfs/:numero/:data', (req, res) => {
+    // Corrigido: Agora separa os dados usando o traço (-) enviado pelo script.js
     const dataFormatada = req.params.data.split('-').reverse().join('-'); 
+    
     const query = 'DELETE FROM notas_fiscais WHERE numero = ? AND data_trabalho = ?';
     db.query(query, [req.params.numero, dataFormatada], (err, result) => {
         if (err) return res.status(500).json(err);
@@ -87,7 +80,7 @@ app.delete('/api/nfs/:numero/:data', (req, res) => {
     });
 });
 
-// Listar todas as datas únicas salvas
+// Listar todas as datas únicas salvas (para alimentar o dropdown da tela)
 app.get('/api/dias-registrados', (req, res) => {
     db.query('SELECT DISTINCT data_trabalho FROM notas_fiscais ORDER BY data_trabalho DESC', (err, results) => {
         if (err) return res.status(500).json(err);
@@ -96,6 +89,4 @@ app.get('/api/dias-registrados', (req, res) => {
     });
 });
 
-// Porta automática do Render ou 3000 local
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`Servidor rodando com sucesso na porta ${PORT}!`));
+app.listen(3000, () => console.log('Servidor Rodando com sucesso na Porta 3000!'));
