@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Controle de Fluxo - Histórico Diário</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <main class="main-panel">
+        <header class="panel-header">
+            <div>
+                <h2>Controle de Notas Fiscais</h2>
+                <div class="date-badge">📅 Dia de Trabalho: <span id="current-work-date">--/--/----</span></div>
+            </div>
+            <div class="mode-selector">
+                <span id="mode-label">Modo Manual</span>
+                <label class="switch">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <div id="scanner-indicator" class="scanner-status hidden">
+                    <span class="pulse-icon"></span>
+                    <span>Bipe Ativo</span>
+                </div>
+            </div>
+        </header>
+        
+        <section class="input-section">
+            <form id="nf-entry-form">
+                <div class="form-row">
+                    <div class="input-group">
+                        <label for="nf-input" id="input-label">Inserir Número da NF</label>
+                        <input type="text" id="nf-input" autocomplete="off" required placeholder="Digite o número e clique em Registrar...">
+                    </div>
+                    <button type="submit" id="btn-submit" class="btn-primary">Registrar Entrada</button>
+                </div>
+                <small class="input-hint" id="input-hint">Modo Manual: Digite a nota e pressione Enter ou clique no botão.</small>
+            </form>
+        </section>
+
+        <section class="queue-section">
+            <div class="section-header">
+                <h3>Fila do Dia Selecionado</h3>
+                <button id="btn-clear-done" class="btn-secondary-sm">Limpar Impressas da Tela</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hora Entrada</th>
+                            <th>ID Nota Fiscal</th>
+                            <th>Status de Impressão</th>
+                            <th class="text-right">Ação Operacional</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nf-rows"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <aside class="sidebar-panel">
+        <div class="ia-card">
+            <div class="ia-header">
+                <div class="ia-avatar">🤖</div>
+                <div>
+                    <h4>Assistente IA Avançado</h4>
+                    <span class="ia-sub">Comandos e Análises</span>
+                </div>
+            </div>
+            <div class="ia-body" id="ia-insights">Selecione o modo de operação para começar.</div>
+            <div class="ia-command-box">
+                <input type="text" id="ia-input" placeholder="Peça para a IA: 'excluir nota 105'...">
+                <button id="btn-ia-cmd">Enviar</button>
+            </div>
+        </div>
+
+        <div class="metrics-card history-card">
+            <h4>Consultar Dias Anteriores</h4>
+            <hr>
+            <div style="margin-bottom: 10px;">
+                <select id="select-history-days" style="width: 100%; padding: 8px; font-family: monospace; border-radius: 4px; border: 1px solid #ccc; background: white;">
+                    <!-- Preenchido dinamicamente -->
+                </select>
+            </div>
+            <div style="display: flex; gap: 5px;">
+                <button id="btn-load-history" class="btn-secondary-sm" style="flex: 1; padding: 6px; cursor:pointer;">Visualizar Dia</button>
+                <button id="btn-back-to-today" class="btn-primary-sm hidden" style="flex: 1; padding: 6px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Voltar para Hoje</button>
+            </div>
+        </div>
+
+        <div class="metrics-card">
+            <h4>Métricas do Lote</h4>
+            <hr>
+            <div class="metric-row"><span>Total no Dia:</span><span id="metric-total" class="metric-val">0</span></div>
+            <div class="metric-row"><span>Aguardando:</span><span id="metric-pending" class="metric-val warning">0</span></div>
+            <div class="metric-row"><span>Eficiência:</span><span id="metric-efficiency" class="metric-val success">100%</span></div>
+        </div>
+    </aside>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
