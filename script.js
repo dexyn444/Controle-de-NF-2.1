@@ -1,4 +1,8 @@
-const API_URL = 'http://localhost:3000/api';
+// =================================================================
+// CONFIGURADO: IP do computador principal para acesso na rede local
+// =================================================================
+const API_URL = 'http://192.168.56.1:3000/api';
+
 const hoje = new Date().toLocaleDateString('pt-BR');
 document.getElementById('current-work-date').textContent = hoje;
 
