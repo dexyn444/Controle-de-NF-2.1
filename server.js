@@ -12,7 +12,7 @@ app.use(cors());
 const db = mysql.createPool({
     host: 'autorack.proxy.rlwy.net',
     user: 'root',
-    password: 'SUA_SENHA_DO_RAILWAY_AQUI', // <-- Cole a sua senha do Railway aqui
+    password: 'yxicJCODoLJakBvcfwgPsKBuDxnMxPse', // <-- Cole a sua senha do Railway aqui
     database: 'railway',
     port: 58285,
     waitForConnections: true,
