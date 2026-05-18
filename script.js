@@ -1,8 +1,4 @@
-// =================================================================
-// CONFIGURADO: Link definitivo do seu servidor hospedado no Render
-// =================================================================
-const API_URL = 'https://controle-de-nf-2-1.onrender.com/api';
-
+const API_URL = 'http://localhost:3000/api';
 const hoje = new Date().toLocaleDateString('pt-BR');
 document.getElementById('current-work-date').textContent = hoje;
 
@@ -34,7 +30,7 @@ const btnBackToToday = document.getElementById('btn-back-to-today');
 let isScannerMode = false;
 let ocultarImpressasVisualmente = false;
 
-// Buscar dados do banco de dados (MySQL na Nuvem) via Servidor Render
+// Buscar dados do banco de dados (MySQL) via Servidor Node
 async function carregarDadosDoBanco() {
     const dataParam = dataTrabalhoAtiva.replace(/\//g, '-');
     try {
@@ -42,7 +38,7 @@ async function carregarDadosDoBanco() {
         queue = await response.json();
         render();
     } catch (error) {
-        iaInsights.innerHTML = "❌ <strong>Erro:</strong> Não foi possível conectar ao servidor backend na Nuvem.";
+        iaInsights.innerHTML = "❌ <strong>Erro:</strong> Não foi possível conectar ao servidor backend.";
     }
 }
 
@@ -68,7 +64,7 @@ async function atualizarSelectHistorico() {
     }
 }
 
-// Enviar nova nota para o Banco de Dados (Railway)
+// Enviar nova nota para o Banco de Dados
 async function salvarNotaNoBanco(nota) {
     try {
         await fetch(`${API_URL}/nfs`, {
@@ -221,11 +217,11 @@ function processarIA(numeroNota, foiDuplicada) {
     if (foiDuplicada) {
         iaInsights.innerHTML = `🚨 <strong>Duplicidade:</strong> A nota #${numeroNota} já existe hoje.`;
     } else {
-        iaInsights.innerHTML = `📥 <strong>Sucesso:</strong> Nota #${numeroNota} guardada com segurança no MySQL na Nuvem.`;
+        iaInsights.innerHTML = `📥 <strong>Sucesso:</strong> Nota #${numeroNota} guardada com segurança no MySQL.`;
     }
 }
 
-// INTERPRETADOR DE COMANDOS DA IA (CONECTADO AO RENDER/RAILWAY)
+// INTERPRETADOR DE COMANDOS DA IA (CONECTADO AO MYSQL)
 async function executarComandoIA() {
     const comando = iaInput.value.toLowerCase().trim();
     if (!comando) return;
@@ -251,7 +247,7 @@ async function executarComandoIA() {
                     iaInsights.innerHTML = `🔍 <strong>Ação IA:</strong> Você pediu para excluir a nota #${numeroNota}, mas ela não foi encontrada no histórico de (${dataTrabalhoAtiva}).`;
                 }
             } catch (error) {
-                iaInsights.innerHTML = `❌ <strong>Erro IA:</strong> Falha ao tentar excluir a nota do servidor MySQL na nuvem.`;
+                iaInsights.innerHTML = `❌ <strong>Erro IA:</strong> Falha ao tentar excluir a nota do servidor MySQL.`;
             }
         } else {
             iaInsights.innerHTML = `🤖 <strong>Dica da IA:</strong> Se deseja que eu apague a nota #${numeroNota}, digite algo como: <em>"excluir nota ${numeroNota}"</em>.`;
@@ -262,7 +258,7 @@ async function executarComandoIA() {
     iaInput.value = '';
 }
 
-btnIaCmd.addEventListener('click', executingComandoIA);
+btnIaCmd.addEventListener('click', executarComandoIA);
 iaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') executarComandoIA(); });
 
 // Inicialização
